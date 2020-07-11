@@ -1138,7 +1138,6 @@ GameObject:
   - component: {fileID: 7391654396029578207}
   - component: {fileID: 7391654396029578206}
   - component: {fileID: 7391654396029578205}
-  - component: {fileID: 7391654396029578200}
   - component: {fileID: 7391654396029578202}
   - component: {fileID: 7391654396029578201}
   m_Layer: 9
@@ -1198,10 +1197,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca42d82762402bd4b917281557387267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 7391654396029578207}
-  isSelected: 0
-  isAtDestination: 1
-  targetLocation: {x: 0, y: 0, z: 0}
+  _agent: {fileID: 7391654396029578207}
+  _isSelected: 0
+  _isAtDestination: 1
+  _targetLocation: {x: 0, y: 0, z: 0}
 --- !u!114 &7391654396029578205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1214,19 +1213,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e9e0f9d9a17c014ea0796f21e4e4e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7391654396029578200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7391654396029578195}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d78d60bdc7ccea4f91b2e25048800c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitControler: {fileID: 7391654396029578206}
 --- !u!54 &7391654396029578202
 Rigidbody:
   m_ObjectHideFlags: 0

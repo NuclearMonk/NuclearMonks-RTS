@@ -172,8 +172,10 @@ public class SelectionController : MonoBehaviour
         Debug.Log("singleClick", this);
         RaycastHit hit;
         Physics.Raycast(_camera.ScreenPointToRay(_uiClickStart), out hit, 1000f,_clickableLayer);
+
+        if (hit.collider == null) return;
         Debug.Log(hit.collider.name, this);
-        SelectScript select =_selected_Dictionary.GameObjectSelectable(hit.collider.gameObject);
+        ISelectable select =_selected_Dictionary.GameObjectSelectable(hit.collider.gameObject);
         if (select!=null)
         {
             if (Input.GetKey(KeyCode.LeftShift))

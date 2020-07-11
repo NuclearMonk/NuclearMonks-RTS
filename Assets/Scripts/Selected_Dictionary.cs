@@ -5,7 +5,7 @@ using UnityEngine;
 public class Selected_Dictionary : MonoBehaviour
 {
     private Dictionary<int, GameObject> _selectedTable = new Dictionary<int, GameObject>();
-    private Dictionary<int, SelectScript> _cachedSelectScripts = new Dictionary<int, SelectScript>();
+    private Dictionary<int, ISelectable> _cachedSelectScripts = new Dictionary<int, ISelectable>();
 
     public void AddSelection(GameObject go)
     {
@@ -16,13 +16,13 @@ public class Selected_Dictionary : MonoBehaviour
             _selectedTable.Add(id, go);
             if (!_cachedSelectScripts.ContainsKey(id))
             {
-                _cachedSelectScripts.Add(id, go.GetComponent<SelectScript>());
+                _cachedSelectScripts.Add(id, go.GetComponent<ISelectable>());
             }
-            _cachedSelectScripts.TryGetValue(id, out SelectScript selected);
-            if (selected != null)
+            _cachedSelectScripts.TryGetValue(id, out ISelectable selectable);
+            if (selectable != null)
             {
 
-                selected.enabled = true;
+                selectable.Select();
             }
 
         }
@@ -30,10 +30,10 @@ public class Selected_Dictionary : MonoBehaviour
     public void RemoveSelection(GameObject go)
     {
         int id = go.GetInstanceID();
-        _cachedSelectScripts.TryGetValue(id, out SelectScript selected);
-        if (selected != null)
+        _cachedSelectScripts.TryGetValue(id, out ISelectable selectable);
+        if (selectable != null)
         {
-            selected.enabled = false;
+            selectable.Deselect();
             _selectedTable.Remove(id);
         }
 
@@ -45,10 +45,10 @@ public class Selected_Dictionary : MonoBehaviour
         foreach (int id in _selectedTable.Keys)
         {
             _selectedTable.TryGetValue(id, out GameObject toBeDeselected);
-            _cachedSelectScripts.TryGetValue(id, out SelectScript selected);
-            if (toBeDeselected != null && selected !=null)
+            _cachedSelectScripts.TryGetValue(id, out ISelectable selectable);
+            if (toBeDeselected != null && selectable !=null)
             {
-                selected.enabled = false;
+                selectable.Deselect();
             }
         }
         _selectedTable.Clear();
@@ -68,22 +68,22 @@ public class Selected_Dictionary : MonoBehaviour
             RemoveSelection(go);
         }
     }
-    public SelectScript GameObjectSelectable(GameObject go)
+    public ISelectable GameObjectSelectable(GameObject go)
     {
-        SelectScript selected;
+        ISelectable selectable;
         int id = go.GetInstanceID();
-        _cachedSelectScripts.TryGetValue(id,out selected);
-        if (selected != null)
+        _cachedSelectScripts.TryGetValue(id,out selectable);
+        if (selectable != null)
         {
-            return selected;
+            return selectable;
         }
         else
         {
-            selected = go.GetComponent<SelectScript>();
-            if (selected != null)
+            selectable = go.GetComponent<ISelectable>();
+            if (selectable != null)
             {
-                _cachedSelectScripts.Add(id, selected);
-                return selected;
+                _cachedSelectScripts.Add(id, selectable);
+                return selectable;
             }
         }
         return null;

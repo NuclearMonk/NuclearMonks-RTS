@@ -11,9 +11,9 @@ public class State_MoveTo : IState
     }
     public void OnEnter()
     {
-        _destination = _unitController.targetLocation;
-        _unitController.agent.SetDestination(_destination);
-        _unitController.agent.avoidancePriority = Mathf.RoundToInt( Random.Range(50,100));
+        _destination = _unitController._targetLocation;
+        _unitController._agent.SetDestination(_destination);
+        _unitController._agent.avoidancePriority = Mathf.RoundToInt( Random.Range(50,100));
 
     }
 
@@ -23,14 +23,14 @@ public class State_MoveTo : IState
 
     public void Tick()
     {
-        if (_destination != _unitController.targetLocation)
+        if (_destination != _unitController._targetLocation)
         {
-            _destination = _unitController.targetLocation;
-            _unitController.agent.SetDestination(_destination);
+            _destination = _unitController._targetLocation;
+            _unitController._agent.SetDestination(_destination);
         }
         if (Vector3.SqrMagnitude(_unitController.transform.position-_destination)<0.1)
         {
-            _unitController.isAtDestination = true;
+            _unitController._isAtDestination = true;
         }
     }
 }

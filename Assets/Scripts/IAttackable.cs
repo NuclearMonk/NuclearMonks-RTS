@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ectable : MonoBehaviour
+public interface IAttackable
 {
-
+    void TakeDamage();
 }

@@ -4,15 +4,27 @@ using UnityEngine;
 
 public class EnemyDetector : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    IAttacker _attacker;
+
+    private void Awake()
     {
-        
+        _attacker = GetComponentInParent<IAttacker>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        IAttackable attackable = other.GetComponent<IAttackable>();
+        if (attackable != null)
+        {
+            _attacker.NewAttackableInDetectionRange(attackable);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        IAttackable attackable = other.GetComponent<IAttackable>();
+        if (attackable != null)
+        {
+            _attacker.RemoveAttackableInDetectionRange(attackable);
+        }
     }
 }
