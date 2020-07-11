@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float _movementSpeed=1;
-    public float _movementTime=5;
+    public float _movementSpeed=1f;
+    public float _movementTime=5f;
     public float _rotationAmmount=5f;
     public Vector3 _zoomAmmount=new Vector3(0,-10,10);
     [SerializeField]
-    private float _minZoom, _maxZoom=0;
+    private float _minZoom, _maxZoom=0f;
     [SerializeField]
     private Camera _camera;
 

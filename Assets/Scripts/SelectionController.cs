@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+[RequireComponent(typeof(MeshCollider))]
+[RequireComponent(typeof(Selected_Dictionary))]
 public class SelectionController : MonoBehaviour
 {
     [SerializeField]
@@ -13,7 +14,7 @@ public class SelectionController : MonoBehaviour
     private RectTransform _uiSelectionBox;
     private Image _uiSelectionImage;
     [SerializeField]
-    private LayerMask _groundLayerMask;                  //using a plane under the actual ground if the ground is not flat is seriously advisable as to avoid gameobjects going unselected because they get under the inclined mesh;
+    private LayerMask _groundPlaneLayerMask;                  //using a plane under the actual ground if the ground is not flat is seriously advisable as to avoid gameobjects going unselected because they get under the inclined mesh;
     [SerializeField]
     private LayerMask _clickableLayer;
 
@@ -31,6 +32,7 @@ public class SelectionController : MonoBehaviour
     {
         //gets the image so it can be enabled and disabled instead of destroyed for perforamnce reasons.
         _uiSelectionImage = _uiSelectionBox.GetComponent<Image>();
+        _meshCollider = GetComponent<MeshCollider>();
     }
 
     private void Update()
@@ -42,35 +44,18 @@ public class SelectionController : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             _uiClickEnd = Input.mousePosition;
-
             UpdateSelectionBox();
-            
-            
-
-
-
         }
         if (Input.GetMouseButtonUp(0))
         {
-            if (_isDragSelect)                         //this check serves to fix the odd case in which the quad is so small unity belives its coplanar
-            {                                          //Can be moved to OnMouseButtonUp if the performance cost of realtme unit selection is not worth it
-                if (!Input.GetKey(KeyCode.LeftShift))
-                {
-                    _selected_Dictionary.RemoveSelections();
-                }
-
+            if (_isDragSelect)                         
+            {                                          
+                if (!Input.GetKey(KeyCode.LeftShift)) _selected_Dictionary.RemoveSelections();
                 CastSelectionArea();
                 DisableSelectionBox();
-
             }
-            else
-            {
-                singleClick(_uiClickStart);
-
-            }
-
+            else SingleClick(_uiClickStart);
         }
-
     }
     void UpdateSelectionBox()
     {
@@ -131,7 +116,7 @@ public class SelectionController : MonoBehaviour
         foreach (Ray ray in rays)
         {
             RaycastHit hit;
-            Physics.Raycast(ray, out hit, 1000f,_groundLayerMask);
+            Physics.Raycast(ray, out hit, 1000f,_groundPlaneLayerMask);
             points.SetValue(hit.point, i);
             i++;
         }
@@ -167,7 +152,7 @@ public class SelectionController : MonoBehaviour
             _selected_Dictionary.AddSelection(other.gameObject);
         
     }
-    private void singleClick(Vector3 uiClickPosition)
+    private void SingleClick(Vector3 uiClickPosition)
     {
         Debug.Log("singleClick", this);
         RaycastHit hit;

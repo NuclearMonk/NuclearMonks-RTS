@@ -4,6 +4,19 @@ using UnityEngine;
 
 public interface IAttacker
 {
+    List<IAttackable> targets
+    {
+        get;
+    }
+    Transform transform
+    {
+        get;
+    }
+    bool _hasTarget
+    {
+        get;
+        set;
+    }
     void NewAttackableInDetectionRange(IAttackable attackable);
     void RemoveAttackableInDetectionRange(IAttackable attackable);
     float CheckRange(IAttackable attackable);

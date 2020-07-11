@@ -1,24 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections.Generic;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class UnitController : MonoBehaviour, ISelectable,IAttacker
+public class UnitController : MonoBehaviour, ISelectable, IAttacker
 {
 
     public NavMeshAgent _agent;
     Outline[] _outlines;
 
 
-    
+
     public bool _isSelected;
     StateMachine _stateMachine;
     public bool _isAtDestination = true;
-    public Vector3 _targetLocation;
-    private List<IAttackable> _inDetectionRange = new List<IAttackable>();
+    public Vector3 _destinationLocation;
+    public bool _hasTarget { get; set; } = false;
 
-    
+    public List<IAttackable> _inDetectionRange = new List<IAttackable>();
+
+    public List<IAttackable> targets => _inDetectionRange;
+
+
 
     // Start is called before the first frame update
     private void Awake()
@@ -33,13 +37,17 @@ public class UnitController : MonoBehaviour, ISelectable,IAttacker
     {
         var idle = new State_Idle();
         var moveTo = new State_MoveTo(this);
+        var attacking = new State_Attacking(this);
         _stateMachine.AddTransition(idle, moveTo, IsNotAtDestination());
         _stateMachine.AddTransition(moveTo,idle,  IsAtDestination());
+        _stateMachine.AddAnyTransition(attacking,HasTarget());
+        _stateMachine.AddTransition(attacking, idle, HasNoTarget());
         _stateMachine.SetState(idle);
     }
     Func<bool> IsNotAtDestination() => () => !_isAtDestination;
     Func<bool> IsAtDestination() => () => _isAtDestination;
-
+    Func<bool> HasTarget() => () => _hasTarget;
+    Func<bool> HasNoTarget() => () => !_hasTarget;
     // Update is called once per frame
     void Update()
     {
@@ -47,7 +55,7 @@ public class UnitController : MonoBehaviour, ISelectable,IAttacker
     }
     public void UpdateDestination(Vector3 newDestination)
     {
-        _targetLocation = newDestination;
+        _destinationLocation = newDestination;
         _isAtDestination = false;
     }
 
@@ -72,6 +80,7 @@ public class UnitController : MonoBehaviour, ISelectable,IAttacker
     public void NewAttackableInDetectionRange(IAttackable attackable)
     {
         _inDetectionRange.Add(attackable);
+        _hasTarget = true;
         Debug.Log("New Attackable in Detection Range of" + gameObject.name, this);
     }
 
@@ -90,4 +99,5 @@ public class UnitController : MonoBehaviour, ISelectable,IAttacker
     {
         throw new NotImplementedException();
     }
+
 }

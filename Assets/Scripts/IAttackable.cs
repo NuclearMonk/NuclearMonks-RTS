@@ -4,5 +4,11 @@ using UnityEngine;
 
 public interface IAttackable
 {
-    void TakeDamage();
+    Transform transform
+    {
+        get;
+    }
+    void TakeDamage(IAttacker attcker, int damage);
+    void DisableThenDestroy();
+    
 }

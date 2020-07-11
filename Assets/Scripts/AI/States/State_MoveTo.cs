@@ -11,7 +11,7 @@ public class State_MoveTo : IState
     }
     public void OnEnter()
     {
-        _destination = _unitController._targetLocation;
+        _destination = _unitController._destinationLocation;
         _unitController._agent.SetDestination(_destination);
         _unitController._agent.avoidancePriority = Mathf.RoundToInt( Random.Range(50,100));
 
@@ -23,9 +23,9 @@ public class State_MoveTo : IState
 
     public void Tick()
     {
-        if (_destination != _unitController._targetLocation)
+        if (_destination != _unitController._destinationLocation)
         {
-            _destination = _unitController._targetLocation;
+            _destination = _unitController._destinationLocation;
             _unitController._agent.SetDestination(_destination);
         }
         if (Vector3.SqrMagnitude(_unitController.transform.position-_destination)<0.1)
