@@ -6,6 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitController : MonoBehaviour, ISelectable, IAttacker
 {
+    private Animationmotor _animationmotor;
 
     public NavMeshAgent _agent;
     Outline[] _outlines;
@@ -17,10 +18,12 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
     public bool _isAtDestination = true;
     public Vector3 _destinationLocation;
     public bool _hasTarget { get; set; } = false;
+    
 
     public List<IAttackable> _inDetectionRange = new List<IAttackable>();
+    public List<IAttackable> targets { get => _inDetectionRange; set => _inDetectionRange = value; }
+    //public List<IAttackable> targets => _inDetectionRange;
 
-    public List<IAttackable> targets => _inDetectionRange;
 
 
 
@@ -30,6 +33,7 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
         _outlines = GetComponentsInChildren<Outline>();
         _agent = GetComponent<NavMeshAgent>();
         _stateMachine = new StateMachine();
+        _animationmotor = GetComponent<Animationmotor>();
 
     }
 
@@ -97,7 +101,8 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
 
     public void Attack(IAttackable target)
     {
-        throw new NotImplementedException();
+        target.TakeDamage(this, 1);
+        _animationmotor.punch();
     }
 
 }

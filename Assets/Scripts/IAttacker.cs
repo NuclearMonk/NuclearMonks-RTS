@@ -7,6 +7,7 @@ public interface IAttacker
     List<IAttackable> targets
     {
         get;
+        set;
     }
     Transform transform
     {

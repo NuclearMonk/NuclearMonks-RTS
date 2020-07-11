@@ -29,7 +29,7 @@ public class State_Attacking : IState
         }
         else
         {
-            _attacker.targets.First().TakeDamage(_attacker, 1);
+            _attacker.Attack(_attacker.targets.First());
             Debug.Log("Batata");
         }
        

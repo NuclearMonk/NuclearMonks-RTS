@@ -6,17 +6,22 @@ using UnityEngine.AI;
 public class Animationmotor : MonoBehaviour
 {
 
-    Animator animator;
-    NavMeshAgent agent;
+    Animator _animator;
+    NavMeshAgent _agent;
     void Start()
     {
-        animator = GetComponentInChildren<Animator>();
-        agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponentInChildren<Animator>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        animator.SetFloat("animationSpeed", agent.velocity.magnitude / agent.speed);
+        _animator.SetFloat("animationSpeed", _agent.velocity.magnitude / _agent.speed);
+    }
+    [ContextMenu("Punch")]
+    public void punch()
+    {
+        _animator.SetTrigger("Attack");
     }
 }

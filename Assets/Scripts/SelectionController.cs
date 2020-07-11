@@ -26,7 +26,7 @@ public class SelectionController : MonoBehaviour
     private Vector3 p1, p2;
     [SerializeField]
     MeshCollider _meshCollider;
-    private WaitForSeconds WaitForABit= new WaitForSeconds(0.2f);
+    private WaitForSeconds WaitForABit= new WaitForSeconds(1f);
 
     private void Awake()
     {
