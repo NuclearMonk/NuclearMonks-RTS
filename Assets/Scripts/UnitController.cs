@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class UnitController : MonoBehaviour, ISelectable, IAttacker
+public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
 {
     private Animationmotor _animationmotor;
 
@@ -18,12 +19,28 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
     public bool _isAtDestination = true;
     public Vector3 _destinationLocation;
     public bool _hasTarget { get; set; } = false;
-    
+
 
     public List<IAttackable> _inDetectionRange = new List<IAttackable>();
     public List<IAttackable> targets { get => _inDetectionRange; set => _inDetectionRange = value; }
 
-    public float _range { get; } = 4f;
+    public float _range { get; } = 1f;
+
+    public int _team;
+    public int team => _team;
+
+    public List<IAttacker> _attackers { get; set; } = new List<IAttacker>();
+
+    public int damage { get; } = 1;
+
+    public int health { get; set; } = 10;
+
+    public float cooldownTime { get; } = 1f;
+
+
+    public bool cooldown { get; set; } = true;
+
+
 
     //public List<IAttackable> targets => _inDetectionRange;
 
@@ -44,10 +61,10 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
     {
         var idle = new State_Idle();
         var moveTo = new State_MoveTo(this);
-        var attacking = new State_Attacking(this,this);
-        _stateMachine.AddAnyTransition( moveTo, IsNotAtDestination());
-        _stateMachine.AddTransition(moveTo,idle,  IsAtDestination());
-        _stateMachine.AddTransition(idle,attacking,HasTarget());
+        var attacking = new State_Attacking(this, this);
+        _stateMachine.AddAnyTransition(moveTo, IsNotAtDestination());
+        _stateMachine.AddTransition(moveTo, idle, IsAtDestination());
+        _stateMachine.AddTransition(idle, attacking, HasTarget());
         _stateMachine.AddTransition(attacking, idle, HasNoTarget());
         _stateMachine.SetState(idle);
     }
@@ -86,17 +103,26 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
 
     public void NewAttackableInDetectionRange(IAttackable attackable)
     {
-        _inDetectionRange.Add(attackable);
-        attackable._attackers.Add(this);
-        _hasTarget = true;
-        Debug.Log("New Attackable in Detection Range o f" + gameObject.name, this);
+        if (attackable.team != _team)
+        {
+            _inDetectionRange.Add(attackable);
+            attackable._attackers.Add(this);
+            _hasTarget = true;
+            Debug.Log("New Attackable in Detection Range of " + gameObject.name, this);
+        }
+
     }
 
     public void RemoveAttackableInDetectionRange(IAttackable attackable)
     {
-        _inDetectionRange.Remove(attackable);
-        attackable._attackers.Remove(this);
-        Debug.Log("Removed Attackable in Detection Range of" + gameObject.name, this);
+        if (attackable.team != _team)
+        {
+            _inDetectionRange.Remove(attackable);
+            attackable._attackers.Remove(this);
+            Debug.Log("Removed Attackable in Detection Range of" + gameObject.name, this);
+        }
+
+
     }
 
     public float CheckRange(IAttackable attackable)
@@ -106,8 +132,39 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
 
     public void Attack(IAttackable target)
     {
-        target.TakeDamage(this, 1);
+        target.TakeDamage(this, damage);
+        cooldown = false;
+        StartCoroutine(CooldownCoroutine());
         _animationmotor.punch();
     }
+    private IEnumerator CooldownCoroutine()
+    {
+        yield return new WaitForSeconds(cooldownTime); //Pobably should be cached
+        cooldown = true;
+    }
 
+    public void DisableThenDestroy()
+    {
+        DestructionRemoval();
+        Destroy(gameObject, 0.2f);
+        gameObject.SetActive(false);
+
+    }
+
+    public void TakeDamage(IAttacker attacker, int damage)
+    {
+        Debug.Log(gameObject.name + " Was Attacked");
+        health -= damage;
+        if (health <= 0)
+        {
+            DisableThenDestroy();
+        }
+    }
+    public void DestructionRemoval()
+    {
+        foreach (IAttacker attacker in _attackers)
+        {
+            attacker.targets.Remove(this);
+        }
+    }
 }

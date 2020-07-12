@@ -5,7 +5,10 @@ using UnityEngine;
 public class Destructible : MonoBehaviour, IAttackable
 {
     public List<IAttacker> _attackers { get; set; } = new List<IAttacker>();
+    public int _team;
+    public int team => _team;
 
+    public int health { get; set; } = 10;
 
     public void DisableThenDestroy()
     {
@@ -18,8 +21,13 @@ public class Destructible : MonoBehaviour, IAttackable
     public void TakeDamage(IAttacker attacker, int damage)
     {
         Debug.Log(gameObject.name + " Was Attacked");
-        attacker.RemoveAttackableInDetectionRange(this);
-        DisableThenDestroy();
+        health -= damage;
+        Debug.Log(health, this);
+        if (health <= 0)
+        {
+            DisableThenDestroy();
+        }
+
     }
     public void DestructionRemoval()
     {

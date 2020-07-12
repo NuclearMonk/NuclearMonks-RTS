@@ -4,24 +4,14 @@ using UnityEngine;
 
 public interface IAttacker
 {
-    List<IAttackable> targets
-    {
-        get;
-        set;
-    }
-    Transform transform
-    {
-        get;
-    }
-    bool _hasTarget
-    {
-        get;
-        set;
-    }
-    float _range
-    {
-        get;
-    }
+    List<IAttackable> targets {get; set;}
+    Transform transform {get;}
+    bool _hasTarget {get; set;}
+    float _range {get;}
+    int team {get;}
+    int damage {get;}
+    float cooldownTime { get; }
+    bool cooldown { get; set; }
     void NewAttackableInDetectionRange(IAttackable attackable);
     void RemoveAttackableInDetectionRange(IAttackable attackable);
     float CheckRange(IAttackable attackable);

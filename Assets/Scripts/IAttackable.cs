@@ -13,7 +13,15 @@ public interface IAttackable
         get;
         set;
     }
-
+    int team
+    {
+        get;
+    }
+    int health
+    {
+        get;
+        set;
+    }
     void TakeDamage(IAttacker attcker, int damage);
     void DisableThenDestroy();
     void DestructionRemoval();

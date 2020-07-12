@@ -33,9 +33,9 @@ public class State_Attacking : IState
             IAttackable target = _attacker.targets.OrderBy(possibletarget => Vector3.SqrMagnitude(possibletarget.transform.position - _attacker.transform.position)).First();
             if (Vector3.Distance(target.transform.position, _attacker.transform.position) > _attacker._range)
             {
-                _unitController._agent.SetDestination(target.transform.position + Vector3.Normalize(_attacker.transform.position- target.transform.position) * (_attacker._range-0.1f));
+                _unitController._agent.SetDestination(target.transform.position + Vector3.Normalize(_attacker.transform.position - target.transform.position) * (_attacker._range - 0.1f));
             }
-            else
+            else if (_attacker.cooldown) 
             {
                 _attacker.Attack(target);
             }
