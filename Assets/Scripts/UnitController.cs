@@ -22,6 +22,9 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
 
     public List<IAttackable> _inDetectionRange = new List<IAttackable>();
     public List<IAttackable> targets { get => _inDetectionRange; set => _inDetectionRange = value; }
+
+    public float _range { get; } = 4f;
+
     //public List<IAttackable> targets => _inDetectionRange;
 
 
@@ -41,10 +44,10 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
     {
         var idle = new State_Idle();
         var moveTo = new State_MoveTo(this);
-        var attacking = new State_Attacking(this);
-        _stateMachine.AddTransition(idle, moveTo, IsNotAtDestination());
+        var attacking = new State_Attacking(this,this);
+        _stateMachine.AddAnyTransition( moveTo, IsNotAtDestination());
         _stateMachine.AddTransition(moveTo,idle,  IsAtDestination());
-        _stateMachine.AddAnyTransition(attacking,HasTarget());
+        _stateMachine.AddTransition(idle,attacking,HasTarget());
         _stateMachine.AddTransition(attacking, idle, HasNoTarget());
         _stateMachine.SetState(idle);
     }
@@ -84,13 +87,15 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker
     public void NewAttackableInDetectionRange(IAttackable attackable)
     {
         _inDetectionRange.Add(attackable);
+        attackable._attackers.Add(this);
         _hasTarget = true;
-        Debug.Log("New Attackable in Detection Range of" + gameObject.name, this);
+        Debug.Log("New Attackable in Detection Range o f" + gameObject.name, this);
     }
 
     public void RemoveAttackableInDetectionRange(IAttackable attackable)
     {
         _inDetectionRange.Remove(attackable);
+        attackable._attackers.Remove(this);
         Debug.Log("Removed Attackable in Detection Range of" + gameObject.name, this);
     }
 

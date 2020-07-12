@@ -18,6 +18,10 @@ public interface IAttacker
         get;
         set;
     }
+    float _range
+    {
+        get;
+    }
     void NewAttackableInDetectionRange(IAttackable attackable);
     void RemoveAttackableInDetectionRange(IAttackable attackable);
     float CheckRange(IAttackable attackable);
