@@ -10,6 +10,7 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
     private Animationmotor _animationmotor;
 
     public NavMeshAgent _agent;
+    public NavMeshObstacle _obstacle;
     Outline[] _outlines;
 
 
@@ -18,13 +19,13 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
     StateMachine _stateMachine;
     public bool _isAtDestination = true;
     public Vector3 _destinationLocation;
-    public bool _hasTarget { get; set; } = false;
+    public bool hasTarget { get; set; } = false;
 
 
     public List<IAttackable> _inDetectionRange = new List<IAttackable>();
     public List<IAttackable> targets { get => _inDetectionRange; set => _inDetectionRange = value; }
 
-    public float _range { get; } = 1f;
+    
 
     public int _team;
     public int team => _team;
@@ -34,11 +35,10 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
     public int damage { get; } = 1;
 
     public int health { get; set; } = 10;
-
-    public float cooldownTime { get; } = 1f;
-
-
-    public bool cooldown { get; set; } = true;
+    public float range { get; } = 1f;
+    public float rampuptime { get; } = 0.7f;
+    public float cooldownTime { get; } = 2f;
+    public bool isoncooldown { get; set; } = false;
 
 
 
@@ -51,9 +51,10 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
     private void Awake()
     {
         _outlines = GetComponentsInChildren<Outline>();
-        _agent = GetComponent<NavMeshAgent>();
-        _stateMachine = new StateMachine();
         _animationmotor = GetComponent<Animationmotor>();
+        _agent = GetComponent<NavMeshAgent>();
+        _obstacle = GetComponent<NavMeshObstacle>();
+        _stateMachine = new StateMachine();
 
     }
 
@@ -70,8 +71,8 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
     }
     Func<bool> IsNotAtDestination() => () => !_isAtDestination;
     Func<bool> IsAtDestination() => () => _isAtDestination;
-    Func<bool> HasTarget() => () => _hasTarget;
-    Func<bool> HasNoTarget() => () => !_hasTarget;
+    Func<bool> HasTarget() => () => hasTarget;
+    Func<bool> HasNoTarget() => () => !hasTarget;
     // Update is called once per frame
     void Update()
     {
@@ -83,6 +84,7 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
         _isAtDestination = false;
     }
 
+    #region SelectionFunctions
     public void Select()
     {
         _isSelected = true;
@@ -100,15 +102,17 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
             outline.enabled = false;
         }
     }
+    #endregion
 
+    #region AttakerFunctions
     public void NewAttackableInDetectionRange(IAttackable attackable)
     {
         if (attackable.team != _team)
         {
             _inDetectionRange.Add(attackable);
             attackable._attackers.Add(this);
-            _hasTarget = true;
-            Debug.Log("New Attackable in Detection Range of " + gameObject.name, this);
+            hasTarget = true;
+            //Debug.Log("New Attackable in Detection Range of " + gameObject.name, this);
         }
 
     }
@@ -119,41 +123,58 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
         {
             _inDetectionRange.Remove(attackable);
             attackable._attackers.Remove(this);
-            Debug.Log("Removed Attackable in Detection Range of" + gameObject.name, this);
+            //Debug.Log("Removed Attackable in Detection Range of" + gameObject.name, this);
         }
 
 
     }
 
-    public float CheckRange(IAttackable attackable)
-    {
-        throw new NotImplementedException();
-    }
-
     public void Attack(IAttackable target)
     {
-        target.TakeDamage(this, damage);
-        cooldown = false;
+
         StartCoroutine(CooldownCoroutine());
-        _animationmotor.punch();
+        if (target != null)
+        {
+            target.TakeDamage(this, damage);
+        }
+
+
+
+
+    }
+    public IEnumerator AttackCoroutine(IAttackable target)
+    {
+        _animationmotor.AttackAnimation();
+        isoncooldown = true;
+        if (target!=null)
+        {
+            yield return new WaitForSeconds(rampuptime);//Pobably should be cached
+            Attack(target);
+        }
+
+
     }
     private IEnumerator CooldownCoroutine()
     {
         yield return new WaitForSeconds(cooldownTime); //Pobably should be cached
-        cooldown = true;
+        isoncooldown = false;
     }
-
+    #endregion
+    #region AttackableFunctions
     public void DisableThenDestroy()
     {
         DestructionRemoval();
-        Destroy(gameObject, 0.2f);
-        gameObject.SetActive(false);
+        if (this != null)
+        {
+            gameObject.SetActive(false);
+        }
+
+
 
     }
 
     public void TakeDamage(IAttacker attacker, int damage)
     {
-        Debug.Log(gameObject.name + " Was Attacked");
         health -= damage;
         if (health <= 0)
         {
@@ -167,4 +188,9 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
             attacker.targets.Remove(this);
         }
     }
+    private void OnDisable()
+    {
+        Destroy(gameObject, 0.5f);
+    }
+    #endregion
 }

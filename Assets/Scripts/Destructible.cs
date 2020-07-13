@@ -13,16 +13,16 @@ public class Destructible : MonoBehaviour, IAttackable
     public void DisableThenDestroy()
     {
         DestructionRemoval();
-        Destroy(gameObject, 0.2f);
         gameObject.SetActive(false);
+
 
     }
 
     public void TakeDamage(IAttacker attacker, int damage)
     {
-        Debug.Log(gameObject.name + " Was Attacked");
+        //Debug.Log(gameObject.name + " Was Attacked");
         health -= damage;
-        Debug.Log(health, this);
+        //Debug.Log(health, this);
         if (health <= 0)
         {
             DisableThenDestroy();
@@ -35,5 +35,9 @@ public class Destructible : MonoBehaviour, IAttackable
         {
             attacker.targets.Remove(this);
         }
+    }
+    private void OnDisable()
+    {
+        Destroy(gameObject, 0.5f);
     }
 }

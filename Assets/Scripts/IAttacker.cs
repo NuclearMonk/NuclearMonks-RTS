@@ -6,14 +6,15 @@ public interface IAttacker
 {
     List<IAttackable> targets {get; set;}
     Transform transform {get;}
-    bool _hasTarget {get; set;}
-    float _range {get;}
+    bool hasTarget {get; set;}
+    float range {get;}
     int team {get;}
     int damage {get;}
+    float rampuptime { get; }
     float cooldownTime { get; }
-    bool cooldown { get; set; }
+    bool isoncooldown { get; set; }
     void NewAttackableInDetectionRange(IAttackable attackable);
     void RemoveAttackableInDetectionRange(IAttackable attackable);
-    float CheckRange(IAttackable attackable);
     void Attack(IAttackable target);
+    IEnumerator AttackCoroutine(IAttackable target);
 }

@@ -22,7 +22,7 @@ public interface IAttackable
         get;
         set;
     }
-    void TakeDamage(IAttacker attcker, int damage);
+    void TakeDamage(IAttacker attacker, int damage);
     void DisableThenDestroy();
     void DestructionRemoval();
 }

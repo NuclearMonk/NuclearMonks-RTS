@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class Animationmotor : MonoBehaviour
@@ -20,7 +18,7 @@ public class Animationmotor : MonoBehaviour
         _animator.SetFloat("animationSpeed", _agent.velocity.magnitude / _agent.speed);
     }
     [ContextMenu("Punch")]
-    public void punch()
+    public void AttackAnimation()
     {
         _animator.SetTrigger("Attack");
     }

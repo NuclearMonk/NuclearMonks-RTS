@@ -154,12 +154,12 @@ public class SelectionController : MonoBehaviour
     }
     private void SingleClick(Vector3 uiClickPosition)
     {
-        Debug.Log("singleClick", this);
+        //Debug.Log("singleClick", this);
         RaycastHit hit;
         Physics.Raycast(_camera.ScreenPointToRay(_uiClickStart), out hit, 1000f,_clickableLayer);
 
         if (hit.collider == null) return;
-        Debug.Log(hit.collider.name, this);
+        //Debug.Log(hit.collider.name, this);
         ISelectable select =_selected_Dictionary.GameObjectSelectable(hit.collider.gameObject);
         if (select!=null)
         {
