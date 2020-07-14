@@ -135,6 +135,7 @@ MonoBehaviour:
   _isAtDestination: 1
   _destinationLocation: {x: 0, y: 0, z: 0}
   _team: 2
+  _range: 1
 --- !u!114 &4254982151813049861
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,7 +35,9 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
     public int damage { get; } = 1;
 
     public int health { get; set; } = 10;
-    public float range { get; } = 1f;
+    [SerializeField]
+    public float _range;
+    public float range { get; set; } =1f;
     public float rampuptime { get; } = 0.7f;
     public float cooldownTime { get; } = 2f;
     public bool isoncooldown { get; set; } = false;
@@ -60,6 +62,7 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
 
     void Start()
     {
+        range = _range;
         var idle = new State_Idle();
         var moveTo = new State_MoveTo(this);
         var attacking = new State_Attacking(this, this);
@@ -137,10 +140,6 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
         {
             target.TakeDamage(this, damage);
         }
-
-
-
-
     }
     public IEnumerator AttackCoroutine(IAttackable target)
     {
@@ -168,9 +167,6 @@ public class UnitController : MonoBehaviour, ISelectable, IAttacker, IAttackable
         {
             gameObject.SetActive(false);
         }
-
-
-
     }
 
     public void TakeDamage(IAttacker attacker, int damage)

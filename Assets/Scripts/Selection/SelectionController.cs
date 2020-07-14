@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 [RequireComponent(typeof(MeshCollider))]
 [RequireComponent(typeof(Selected_Dictionary))]
+[RequireComponent(typeof(BuildingManager))]
 public class SelectionController : MonoBehaviour
 {
     [SerializeField]
@@ -17,16 +18,22 @@ public class SelectionController : MonoBehaviour
     private LayerMask _groundPlaneLayerMask;                  //using a plane under the actual ground if the ground is not flat is seriously advisable as to avoid gameobjects going unselected because they get under the inclined mesh;
     [SerializeField]
     private LayerMask _clickableLayer;
+    [SerializeField]
+    private LayerMask _buildableLayer;
 
+    [SerializeField]
+    private BuildingManager _buildingManager;
+    public GameObject TestGameobject;
 
     private bool _isDragSelect;
+    public bool _isBuildmode = false;
     private Vector3 _uiClickStart;
     private Vector3 _uiClickEnd;
     private float _width, _height;
     private Vector3 p1, p2;
     [SerializeField]
     MeshCollider _meshCollider;
-    private WaitForSeconds WaitForABit= new WaitForSeconds(1f);
+    private WaitForSeconds WaitForABit= new WaitForSeconds(0.1f);
 
     private void Awake()
     {
@@ -37,24 +44,41 @@ public class SelectionController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_isBuildmode)
         {
-            _uiClickStart = Input.mousePosition;
-        }
-        if (Input.GetMouseButton(0))
-        {
-            _uiClickEnd = Input.mousePosition;
-            UpdateSelectionBox();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (_isDragSelect)                         
-            {                                          
-                if (!Input.GetKey(KeyCode.LeftShift)) _selected_Dictionary.RemoveSelections();
-                CastSelectionArea();
-                DisableSelectionBox();
+            RaycastHit hit;
+            Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out hit, 1000f, _buildableLayer);
+            _buildingManager.UpdateBuildingPosition(hit.point);
+            if (Input.GetMouseButtonDown(0))
+            {
+                StartCoroutine(DisableBuildModeCoroutine());
             }
-            else SingleClick(_uiClickStart);
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                _uiClickStart = Input.mousePosition;
+            }
+            if (Input.GetMouseButton(0))
+            {
+                if (_isBuildmode)
+                {
+                    _uiClickStart = _uiClickEnd;
+                }
+                _uiClickEnd = Input.mousePosition;
+                UpdateSelectionBox();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (_isDragSelect)
+                {
+                    if (!Input.GetKey(KeyCode.LeftShift)) _selected_Dictionary.RemoveSelections();
+                    CastSelectionArea();
+                    DisableSelectionBox();
+                }
+                else SingleClick(_uiClickStart);
+            }
         }
     }
     void UpdateSelectionBox()
@@ -101,7 +125,7 @@ public class SelectionController : MonoBehaviour
         _isDragSelect = false;
         _uiSelectionImage.enabled = false;
     }
-
+    #region SELECTION STUFF
     private void CastSelectionArea()
     {
         Vector3[] points= new Vector3[5];
@@ -187,5 +211,21 @@ public class SelectionController : MonoBehaviour
     {
         yield return WaitForABit;
         _meshCollider.enabled = false;
+    }
+    #endregion
+    public void EnableBuildMode()
+    {
+        _isBuildmode = true;
+        _buildingManager.CreateBuildingBuildSketch(TestGameobject);
+    }
+    public void DisableBuildMode()
+    {
+        _isBuildmode = false;
+        _buildingManager._currentlyBuilding = null;
+    }
+    private IEnumerator DisableBuildModeCoroutine()
+    {
+        yield return WaitForABit;
+        DisableBuildMode();
     }
 }

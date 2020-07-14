@@ -146,7 +146,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 448157911767657282}
-  m_LocalRotation: {x: -0.017689142, y: -0.49249086, z: -0.042208426, w: 0.8691135}
+  m_LocalRotation: {x: -0.017689144, y: -0.49249086, z: -0.04220843, w: 0.8691135}
   m_LocalPosition: {x: -0.3730879, y: 0.000000032559036, z: 0.0000000035762786}
   m_LocalScale: {x: 1.0000004, y: 0.9999669, z: 1.000006}
   m_Children:
@@ -1252,7 +1252,7 @@ Animator:
   m_GameObject: {fileID: 449814930418338580}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9035850883732af4daf57c888e1fefce, type: 3}
-  m_Controller: {fileID: 9100000, guid: 85342f1ffe35e07409e1f59c8bed3ba2, type: 2}
+  m_Controller: {fileID: 9100000, guid: fe76c68daced1174694f6f8062e727cb, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -2296,7 +2296,7 @@ GameObject:
   - component: {fileID: 7391654396029578201}
   - component: {fileID: 8065738847666096684}
   m_Layer: 9
-  m_Name: Unit
+  m_Name: Unit 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2357,8 +2357,8 @@ MonoBehaviour:
   _isSelected: 0
   _isAtDestination: 1
   _destinationLocation: {x: 0, y: 0, z: 0}
-  _team: 1
-  _range: 1
+  _team: 2
+  _range: 10
 --- !u!114 &7391654396029578205
 MonoBehaviour:
   m_ObjectHideFlags: 0
